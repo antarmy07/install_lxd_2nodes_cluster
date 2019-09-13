@@ -1,0 +1,13 @@
+- hosts: node1
+  become: yes
+  tasks:
+
+   - name: launch ubuntu containers 
+     shell: /snap/bin/lxc launch ubuntu:16.04 dc1 
+   
+- hosts: node2
+  become: yes
+  tasks:
+
+   - name: launch ubuntu containers 
+     shell: /snap/bin/lxc launch ubuntu:16.04 dc2  

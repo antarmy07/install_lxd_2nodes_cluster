@@ -1,0 +1,73 @@
+- hosts: node1
+  become: yes
+  tasks:
+  
+   - name: install lxc and lxd
+     shell: /usr/bin/snap install lxd
+
+   - name: install ZFS tools
+     apt: name=zfsutils-linux state=latest
+   
+   - name: update PATH environment
+     shell: /bin/echo export PATH="/snap/bin:$PATH" >> .bashrc 
+
+   - name: add username anish to group called lxd
+     user:
+       name: ubuntu
+       group: lxd
+       append: yes
+   
+   - name: transfer init_cluster file
+     copy: src=init_cluster.sh dest=/home/ubuntu mode=765
+
+   - name: initialize lxd   
+     shell: sh /home/ubuntu/init_cluster.sh
+     become: true
+     become_user: root
+
+   - name: launch ubuntu containers 
+     shell: /snap/bin/lxc launch ubuntu:16.04 dc1
+  
+   - name: clean crt for cluster
+     shell: /snap/bin/lxc info | sed -n -e '/certificate:/,/certificate_fingerprint:/ p' | sed '1d;$d' > /home/ubuntu/cluster.crt
+
+   - name: transfer cluster cert from node1  
+     fetch: src=/home/ubuntu/cluster.crt dest=.
+
+################################################################################################################################################
+
+-  hosts: node2
+   become: yes
+   tasks:
+  
+   - name: install lxc and lxd
+     shell: /usr/bin/snap install lxd
+
+   - name: install ZFS tools
+     apt: name=zfsutils-linux state=latest
+   
+   - name: update PATH environment
+     shell: /bin/echo export PATH="/snap/bin:$PATH" >> .bashrc  
+
+   - name: add username anish to group called lxd
+     user:
+       name: anish
+       group: lxd
+       append: yes
+    
+   - name: transfer init_cluster file
+     copy: src=join_cluster.sh dest=/home/ubuntu mode=765
+
+   - name: transfer cluster certiicate from node1
+     copy: src=node1/home/ubuntu/cluster.crt dest=/home/ubuntu mode=765
+
+   - name: clean the server.crt for cluster join init 
+     shell: cat /home/ubuntu/cluster.crt >> /home/ubuntu/join_cluster.sh && /bin/echo "EOF" >> /home/ubuntu/join_cluster.sh 
+   
+   - name: initialize lxd   
+     shell: sh /home/ubuntu/join_cluster.sh 
+     become: true
+     become_user: root
+     
+   - name: launch ubuntu containers 
+     shell: /snap/bin/lxc launch ubuntu:16.04 dc2
