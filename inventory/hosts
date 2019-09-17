@@ -1,0 +1,6 @@
+[nodes]
+node1 ip_address=<ip address of your node> ansible_user=ubuntu
+node2 ip_address=<ip address of your node>  ansible_user=ubuntu
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3

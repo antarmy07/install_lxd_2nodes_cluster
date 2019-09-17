@@ -11,7 +11,7 @@
    - name: update PATH environment
      shell: /bin/echo export PATH="/snap/bin:$PATH" >> .bashrc 
 
-   - name: add username anish to group called lxd
+   - name: add username ubuntu to group called lxd
      user:
        name: ubuntu
        group: lxd
@@ -49,9 +49,9 @@
    - name: update PATH environment
      shell: /bin/echo export PATH="/snap/bin:$PATH" >> .bashrc  
 
-   - name: add username anish to group called lxd
+   - name: add username ubuntu to group called lxd
      user:
-       name: anish
+       name: ubuntu
        group: lxd
        append: yes
     

@@ -3,8 +3,8 @@
 /usr/bin/apt purge -y lxd
 cat <<EOF | /snap/bin/lxd init --preseed
 config:
-  core.trust_password: sekret
-  core.https_address: 192.168.1.100:8443
+  core.trust_password: <secret of your cluster>
+  core.https_address: <set listening IP address>:8443
   images.auto_update_interval: 15
 storage_pools:
 - name: default
@@ -13,7 +13,7 @@ networks:
 - name: lxdbr0
   type: bridge
   config:
-    ipv4.address: 172.16.0.30/24
+    ipv4.address: <netowrk IP address cdir of your LXD cluster you want to create>
     ipv6.address: none
 profiles:
 - name: default
